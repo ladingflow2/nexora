@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>Nexora Marketing Digital</title>
+<style>
+  :root { --gold:#f5c518; --bg:#000; --fg:#fff; box-sizing:border-box; }
+  *, *::before, *::after { box-sizing:inherit; }
+  html, body { margin:0; background:var(--bg); color:var(--fg); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  .seq { position:relative; height:500vh; }
+  .stage { position:sticky; top:0; width:100%; height:100vh; height:100dvh; overflow:hidden; background:#000; }
+  .stage canvas { width:100%; height:100%; object-fit:contain; display:block; }
+  .stage.has-logo canvas { height:calc(100% - 14vh); margin-top:14vh; }
+  .logo { position:absolute; left:50%; top:calc(env(safe-area-inset-top,0px) + 3.5vh); width:min(54vw,280px); height:auto; opacity:0; transform:translate(-50%,-10px); z-index:2; pointer-events:none; filter:drop-shadow(0 0 14px rgba(245,197,24,.25)); will-change:opacity,transform; }
+  .progress { position:absolute; left:0; top:0; height:3px; width:100%; background:var(--gold); transform-origin:0 50%; transform:scaleX(0); z-index:3; }
+  .hint { position:absolute; left:0; right:0; bottom:calc(env(safe-area-inset-bottom,0px) + 18px); text-align:center; font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); z-index:3; transition:opacity .4s; pointer-events:none; }
+  .hint span { display:block; margin-top:6px; font-size:18px; animation:bob 1.4s ease-in-out infinite; }
+  @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+  .loader { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; background:#000; z-index:5; transition:opacity .5s; }
+  .loader.done { opacity:0; pointer-events:none; }
+  .bar { width:55%; max-width:260px; height:3px; background:#2a2a2a; border-radius:2px; overflow:hidden; }
+  .bar i { display:block; height:100%; width:0; background:var(--gold); }
+  .loader p { margin:0; font-size:12px; letter-spacing:.15em; text-transform:uppercase; color:#aaa; }
+
+  /* ---- Seção 4: formulário ---- */
+  .contact { position:relative; min-height:100vh; min-height:100dvh; padding:calc(env(safe-area-inset-top,0px) + 40px) 22px calc(env(safe-area-inset-bottom,0px) + 40px); display:flex; flex-direction:column; align-items:center; justify-content:center; background:radial-gradient(120% 60% at 50% 0%, rgba(245,197,24,.16), transparent 60%), #000; }
+  .contact .brand { width:min(48vw,220px); height:auto; margin:0 0 22px; filter:drop-shadow(0 0 14px rgba(245,197,24,.25)); }
+  .contact h2 { margin:0 0 8px; text-align:center; font-size:clamp(26px,8vw,34px); line-height:1.08; font-weight:900; text-transform:uppercase; letter-spacing:-.01em; }
+  .contact h2 em { font-style:normal; color:var(--gold); }
+  .contact .sub { margin:0 0 24px; max-width:34ch; text-align:center; font-size:15px; line-height:1.45; color:#c9c9c9; }
+  .lead-form { width:100%; max-width:420px; display:flex; flex-direction:column; gap:14px; }
+  .field label { display:block; margin:0 0 6px 2px; font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--gold); }
+  .field input, .field select, .field textarea { width:100%; padding:14px 14px; border:1px solid #3a3320; border-radius:12px; background:#0e0e0e; color:#fff; font:inherit; font-size:16px; outline:none; transition:border-color .2s, box-shadow .2s; -webkit-appearance:none; appearance:none; }
+  .field select { background-image:linear-gradient(45deg,transparent 50%,var(--gold) 50%),linear-gradient(135deg,var(--gold) 50%,transparent 50%); background-position:calc(100% - 20px) 50%, calc(100% - 14px) 50%; background-size:6px 6px,6px 6px; background-repeat:no-repeat; padding-right:38px; }
+  .field textarea { min-height:84px; resize:vertical; }
+  .field input::placeholder, .field textarea::placeholder { color:#6d6d6d; }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(245,197,24,.22); }
+  .field.err input, .field.err select { border-color:#ff6b5e; }
+  .cta { margin-top:6px; display:flex; align-items:center; justify-content:center; gap:10px; width:100%; padding:17px 18px; border:0; border-radius:14px; background:linear-gradient(180deg,#ffd740,#f5c518); color:#111; font:inherit; font-size:16px; font-weight:900; letter-spacing:.02em; text-transform:uppercase; cursor:pointer; box-shadow:0 8px 28px rgba(245,197,24,.28); }
+  .cta:active { transform:translateY(1px); }
+  .cta svg { width:22px; height:22px; flex:none; }
+  .note { margin:2px 0 0; text-align:center; font-size:12px; color:#8a8a8a; }
+  .msg { margin:0; text-align:center; font-size:13px; color:#ff9a8f; min-height:1em; }
+  @media (prefers-reduced-motion: reduce) { .hint span { animation:none; } }
+</style>
+</head>
+<body>
+
+<section class="seq" id="seq1" data-count="200" data-dir="frames-2" data-first="true">
+  <div class="stage">
+    <div class="progress"></div>
+    <canvas aria-label="Animação: Nexora Marketing Digital, capture cada lead" role="img"></canvas>
+    <div class="hint">Role para baixo<span>↓</span></div>
+    <div class="loader"><div class="bar"><i></i></div><p>0%</p></div>
+  </div>
+</section>
+
+<section class="seq" id="seq2" data-count="188" data-dir="frames-1">
+  <div class="stage has-logo">
+    <img class="logo" src="logo-nexora.png" alt="Nexora Marketing Digital">
+    <div class="progress"></div>
+    <canvas aria-label="Animação: Agência de Marketing Digital" role="img"></canvas>
+  </div>
+</section>
+
+<section class="seq" id="seq3" data-count="192" data-dir="frames-3">
+  <div class="stage">
+    <div class="progress"></div>
+    <canvas aria-label="Animação: Por que investir no digital? Presença digital" role="img"></canvas>
+  </div>
+</section>
+
+<section class="contact" id="contato">
+  <img class="brand" src="logo-nexora.png" alt="Nexora Marketing Digital">
+  <h2>Quero posicionar <em>minha marca</em></h2>
+  <p class="sub">Preencha em 30 segundos e continue a conversa direto no WhatsApp com a nossa equipe.</p>
+  <form class="lead-form" id="lead-form" novalidate>
+    <div class="field"><label for="nome">Seu nome</label><input id="nome" name="nome" type="text" autocomplete="name" placeholder="Como podemos te chamar?" required></div>
+    <div class="field"><label for="marca">Marca ou empresa</label><input id="marca" name="marca" type="text" autocomplete="organization" placeholder="Nome do seu negócio" required></div>
+    <div class="field"><label for="interesse">O que você precisa?</label>
+      <select id="interesse" name="interesse" required>
+        <option value="" selected disabled>Escolha uma opção</option>
+        <option>Estratégia personalizada</option>
+        <option>Gestão de redes sociais</option>
+        <option>Criação de conteúdo</option>
+        <option>Anúncios e tráfego pago</option>
+        <option>Análise e relatórios</option>
+        <option>Quero um pacote completo</option>
+      </select>
+    </div>
+    <div class="field"><label for="detalhes">Conte um pouco mais (opcional)</label><textarea id="detalhes" name="detalhes" placeholder="Seu objetivo, segmento, instagram..."></textarea></div>
+    <p class="msg" id="msg" role="alert"></p>
+    <button class="cta" type="submit">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.95L2 22l5.2-1.5A9.9 9.9 0 1 0 12.04 2Zm5.8 14.1c-.25.7-1.4 1.3-1.95 1.35-.5.05-1.1.07-1.8-.12-.4-.13-.95-.3-1.6-.6-2.8-1.2-4.6-4-4.75-4.2-.13-.2-1.1-1.45-1.1-2.8 0-1.3.7-1.95.95-2.2.25-.27.55-.33.75-.33h.5c.17 0 .4-.05.6.45.25.55.8 1.9.87 2.05.07.13.1.3.02.5-.1.2-.15.32-.3.5-.15.17-.3.37-.45.5-.15.15-.3.3-.13.6.17.3.75 1.25 1.6 2 1.1.98 2.03 1.3 2.33 1.43.3.15.47.12.65-.07.17-.2.75-.87.95-1.17.2-.3.4-.25.67-.15.27.1 1.7.8 2 .95.3.15.5.22.57.35.08.12.08.72-.17 1.4Z"/></svg>
+      Chamar no WhatsApp
+    </button>
+    <p class="note">Ao enviar, o WhatsApp abre com a sua mensagem pronta. Nada é armazenado nesta página.</p>
+  </form>
+</section>
+
+<script>
+(function () {
+  /*FRAMES_OVERRIDE*/
+
+  function frameSrc(dir, i) {
+    if (window.FRAMES && window.FRAMES[dir]) return window.FRAMES[dir][i - 1];
+    return "./" + dir.replace("frames-", "f") + "_" + String(i).padStart(4, "0") + ".webp";
+  }
+
+  function Sequence(section, onReady) {
+    var dir = section.dataset.dir;
+    var count = (window.FRAMES && window.FRAMES[dir]) ? window.FRAMES[dir].length : +section.dataset.count;
+    var canvas = section.querySelector("canvas"), ctx = canvas.getContext("2d");
+    var progress = section.querySelector(".progress");
+    var hint = section.querySelector(".hint");
+    var logo = section.querySelector(".logo");
+    var loader = section.querySelector(".loader");
+    var bar = loader && loader.querySelector("i"), pct = loader && loader.querySelector("p");
+    var images = new Array(count), loaded = 0, target = 0, current = 0, lastDrawn = -1, LERP = 0.2;
+
+    function done() {
+      loaded++;
+      if (loader) {
+        var p = Math.round(loaded / count * 100);
+        bar.style.width = p + "%"; pct.textContent = p + "%";
+      }
+      if (loaded === count) {
+        if (loader) loader.classList.add("done");
+        update(); draw(true);
+        if (onReady) onReady();
+      }
+    }
+
+    this.load = function () {
+      for (var i = 0; i < count; i++) {
+        var im = new Image();
+        im.onload = done; im.onerror = done;
+        im.src = frameSrc(dir, i + 1);
+        images[i] = im;
+      }
+    };
+
+    function update() {
+      var r = section.getBoundingClientRect();
+      var max = section.offsetHeight - window.innerHeight;
+      var f = max > 0 ? Math.min(Math.max(-r.top / max, 0), 1) : 0;
+      target = (count - 1) * f;
+      progress.style.transform = "scaleX(" + f + ")";
+      if (hint) hint.style.opacity = f > 0.02 ? 0 : 1;
+      if (logo) {
+        var o = Math.min(Math.max((f - 0.06) / 0.3, 0), 1);
+        logo.style.opacity = o;
+        logo.style.transform = "translate(-50%," + (-10 * (1 - o)) + "px)";
+      }
+    }
+
+    function draw(force) {
+      var idx = Math.max(0, Math.min(Math.round(current), count - 1));
+      if (!force && idx === lastDrawn) return;
+      var im = images[idx];
+      if (im && im.complete && im.naturalWidth) {
+        if (canvas.width !== im.naturalWidth) { canvas.width = im.naturalWidth; canvas.height = im.naturalHeight; }
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(im, 0, 0);
+        lastDrawn = idx;
+      }
+    }
+
+    this.update = update;
+    this.tick = function () {
+      current += (target - current) * LERP;
+      if (Math.abs(target - current) < 0.01) current = target;
+      draw(false);
+    };
+  }
+
+  var seqs = [], s1, s2, s3;
+  s3 = new Sequence(document.getElementById("seq3"));
+  s2 = new Sequence(document.getElementById("seq2"), function () { s3.load(); }); // 3ª carrega depois da 2ª
+  s1 = new Sequence(document.getElementById("seq1"), function () { s2.load(); }); // 2ª carrega depois da 1ª
+  seqs.push(s1, s2, s3);
+  s1.load();
+
+  function onScroll() { seqs.forEach(function (s) { s.update(); }); }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+  onScroll();
+
+  (function loop() { seqs.forEach(function (s) { s.tick(); }); requestAnimationFrame(loop); })();
+
+  // ---- Formulário → WhatsApp ----
+  // TROQUE pelo número da Nexora: código do país + DDD + número, só dígitos (ex.: 5551999998888)
+  var WHATSAPP_NUMBER = "5551900000000";
+
+  var form = document.getElementById("lead-form");
+  var msg = document.getElementById("msg");
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var g = function (id) { return document.getElementById(id); };
+    var nome = g("nome").value.trim(), marca = g("marca").value.trim(),
+        interesse = g("interesse").value, detalhes = g("detalhes").value.trim();
+    var ok = true;
+    [["nome", nome], ["marca", marca], ["interesse", interesse]].forEach(function (p) {
+      var box = g(p[0]).closest(".field");
+      var bad = !p[1];
+      box.classList.toggle("err", bad);
+      if (bad) ok = false;
+    });
+    if (!ok) { msg.textContent = "Preencha os campos destacados para continuar."; return; }
+    msg.textContent = "";
+    var text = "Olá! Quero posicionar minha marca.\n\n" +
+      "Nome: " + nome + "\n" +
+      "Marca/empresa: " + marca + "\n" +
+      "Preciso de: " + interesse +
+      (detalhes ? "\nDetalhes: " + detalhes : "");
+    var url = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(text);
+    var w = window.open(url, "_blank", "noopener");
+    if (!w) { window.location.href = url; }
+  });
+})();
+</script>
+</body>
+</html>
